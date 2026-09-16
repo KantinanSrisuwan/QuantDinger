@@ -32,12 +32,10 @@ _PREFIX_TAGS: list[tuple[str, str]] = [
     ("/api/dashboard", "Dashboard"),
     ("/api/settings", "Settings"),
     ("/api/portfolio", "Portfolio"),
-    ("/api/ibkr", "IBKR"),
     ("/api/alpaca", "Alpaca"),
     ("/api/global-market", "GlobalMarket"),
     ("/api/community", "Community"),
     ("/api/fast-analysis", "FastAnalysis"),
-    ("/api/billing", "Billing"),
     ("/api/quick-trade", "QuickTrade"),
 ]
 
@@ -74,12 +72,10 @@ def register_human_blueprints(api: Api) -> None:
     from app.routes.dashboard import dashboard_blp
     from app.routes.settings import settings_blp
     from app.routes.portfolio import portfolio_blp
-    from app.routes.ibkr import ibkr_blp
     from app.routes.alpaca import alpaca_blp
     from app.routes.global_market import global_market_blp
     from app.routes.community import community_blp
     from app.routes.fast_analysis import fast_analysis_blp
-    from app.routes.billing import billing_blp
     from app.routes.quick_trade import quick_trade_blp
 
     registrations: list[tuple] = [
@@ -101,12 +97,10 @@ def register_human_blueprints(api: Api) -> None:
         (dashboard_blp, "/api/dashboard"),
         (settings_blp, "/api/settings"),
         (portfolio_blp, "/api/portfolio"),
-        (ibkr_blp, "/api/ibkr"),
         (alpaca_blp, "/api/alpaca"),
         (global_market_blp, "/api/global-market"),
         (community_blp, "/api/community"),
         (fast_analysis_blp, "/api/fast-analysis"),
-        (billing_blp, "/api/billing"),
         (quick_trade_blp, "/api/quick-trade"),
     ]
 

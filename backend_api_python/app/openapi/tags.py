@@ -41,11 +41,9 @@ ALL_TAGS = [
     {"name": DASHBOARD, "description": "Dashboard aggregates (Internal)"},
     {"name": PORTFOLIO, "description": "Manual portfolio tracking (Internal)"},
     {"name": SETTINGS, "description": "System and brand settings (Mixed)"},
-    {"name": BILLING, "description": "Membership and USDT billing (Internal)"},
     {"name": FAST_ANALYSIS, "description": "Fast AI analysis (Public)"},
     {"name": GLOBAL_MARKET, "description": "Global market overview (Public)"},
     {"name": AI_CHAT, "description": "Legacy AI chat compatibility (Internal)"},
     {"name": QUICK_TRADE, "description": "Manual quick trade (Internal)"},
-    {"name": IBKR, "description": "Interactive Brokers adapter (Internal)"},
     {"name": ALPACA, "description": "Alpaca adapter (Internal)"},
 ]
