@@ -1,0 +1,89 @@
+name: Forex SMC & MT5 Test Pipeline
+
+on:
+  push:
+    branches: [main, master, develop, "feature/**"]
+    paths:
+      - "backend_api_python/tests/forex_smc/**"
+      - "backend_api_python/app/services/live_trading/**"
+      - "backend_api_python/app/utils/smc_indicators.py"
+      - "backend_api_python/test-requirements.txt"
+      - ".github/workflows/forex-smc-ci.yml"
+      - "run_tests.ps1"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: forex-smc-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Forex SMC Unit Tests (Mock MT5, Math, Circuit Breaker)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install Test Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r backend_api_python/test-requirements.txt
+
+      - name: Syntax Check
+        run: |
+          python -m py_compile backend_api_python/tests/forex_smc/*.py
+
+      - name: Run Forex SMC Unit Tests
+        run: |
+          python -m pytest backend_api_python/tests/forex_smc -c backend_api_python/tests/forex_smc/pytest.ini -v
+
+  postgres-integration:
+    name: PostgreSQL Live Connection Verification
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: quantdinger
+          POSTGRES_PASSWORD: quantdinger123
+          POSTGRES_DB: quantdinger
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U quantdinger -d quantdinger"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://quantdinger:quantdinger123@localhost:5432/quantdinger
+      RUN_DB_TESTS: "1"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Test Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r backend_api_python/test-requirements.txt
+
+      - name: Run PostgreSQL Live Integration Test
+        run: |
+          python -m pytest backend_api_python/tests/forex_smc/test_postgres_connection.py -c backend_api_python/tests/forex_smc/pytest.ini -v
